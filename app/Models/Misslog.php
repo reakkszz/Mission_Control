@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Misslog extends Model
+class MissLog extends Model
 {
     protected $fillable = [
         'mission_id',
