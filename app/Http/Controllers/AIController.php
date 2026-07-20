@@ -24,32 +24,38 @@ class AIController extends Controller
 
     $apiKey = env('GEMINI_API_KEY');
 
-    $response = Http::post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={$apiKey}",
-        [
-            "contents" => [
-                [
-                    "parts" => [
-                        [
-                            "text" => $message
-                        ]
+    $response = Http::timeout(30)->post(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}",
+    [
+        "contents" => [
+            [
+                "parts" => [
+                    [
+                        "text" => $message
                     ]
                 ]
             ]
         ]
-    );
+    ]
+);
 
-    if ($response->status() === 429) {
-        $reply ="⚠️ AI sedang mencapai batas penggunaan Gemini. Silahkan coba lagi beberapa saat.";
+if ($response->successful()) {
 
-    } elseif ($response->successful()) {
-        $reply = $response['candidates'][0]['content']['parts'][0]['text']
+    $reply = $response['candidates'][0]['content']['parts'][0]['text']
         ?? 'No response from AI.';
 
-    } else {
-        $reply = 'Error: '. $response->body();
-    }
+} elseif ($response->status() == 429) {
 
+    $reply = "⚠️ Batas penggunaan AI telah tercapai. Silakan coba lagi nanti.";
+
+} elseif ($response->status() == 503) {
+
+    $reply = "⚠️ AI sedang sibuk. Silakan coba lagi beberapa saat.";
+
+} else {
+
+    $reply = "⚠️ Terjadi kesalahan saat menghubungi AI.";
+}
     return view('ai.index', compact('message', 'reply'));
 }
 }
