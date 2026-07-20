@@ -25,7 +25,7 @@ class DashboardController extends Controller
         $completedMissions = Mission::whereHas('operation', function ($query) {
             $query->where('user_id', Auth::id());
         })
-        ->where('status', 'Completed')
+        ->where('status', 'completed')
         ->count();
         $progress = $totalMissions > 0
             ? round(($completedMissions / $totalMissions) * 100)
