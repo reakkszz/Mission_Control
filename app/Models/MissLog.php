@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MissLog extends Model
 {
+    protected $table = 'misslogs';
+    
     protected $fillable = [
         'mission_id',
         'title',
