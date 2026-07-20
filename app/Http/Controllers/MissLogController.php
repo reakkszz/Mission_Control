@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Misslog;
+use App\Models\MissLog;
 use App\Models\Mission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class MisslogController extends Controller
+class MissLogController extends Controller
 {
     public function index()
     {
@@ -23,6 +23,7 @@ class MisslogController extends Controller
     public function create()
     {
         $missions = Mission::whereHas('operation', function ($query) {
+            $query->where('user_id', Auth::id());
         })
         ->orderBy('title')
         ->get();
@@ -62,7 +63,7 @@ class MisslogController extends Controller
 
     }
 
-    public function edit(Misslog $missLog)
+    public function edit(MissLog $missLog)
     {
         abort_if($missLog->mission->operation->user_id !== Auth::id(), 403);
 
